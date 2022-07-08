@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Particules</title>
+    </head>
+
+    <body>
+        <canvas id="canvas"></canvas>
+    </body>
+    <script>
+
+        function animeParticles(ctx, nb_particles, colors, max_speedy_percentage, max_speedx_percentage, particle_width_percentage, particle_height_percentage){
+
+            const max_speedy = max_speedy_percentage*ctx.canvas.height;
+            const max_speedx = max_speedx_percentage*ctx.canvas.width;
+            const particle_width = particle_width_percentage*ctx.canvas.width;
+            const particle_height = particle_height_percentage*ctx.canvas.width;
+
+            particles = [];
+            for (let k=0; k<nb_particles; k++){
+                particles.push({
+                    t: Math.random()*10,
+                    x: Math.random() * ctx.canvas.clientWidth,
+                    y: Math.random() * ctx.canvas.clientHeight,
+                    speedy: max_speedy/2 + Math.random() * max_speedy/2,
+                    speedx: (2 * Math.random() - 1) * max_speedx,
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                });
+            }
+
+            let time = Date.now();
+
+            function drawParticle(particle){
+                const gradient = ctx.createLinearGradient(particle.x, particle.y, particle.x + particle_width, particle.y + particle_height)
+                gradient.addColorStop(0,"rgba("+particle.color[0]*1.5+","+particle.color[1]*1.5+","+particle.color[2]*1.5+","+(1.- particle.y/(ctx.canvas.clientHeight-particle_height))+")");
+                gradient.addColorStop(1,"rgba("+particle.color[0]+","+particle.color[1]+","+particle.color[2]+","+(1.- particle.y/(ctx.canvas.clientHeight-particle_height))+")");
+                ctx.fillStyle = gradient;
+                //ctx.fillStyle = "rgba("+particle.color[0]+","+particle.color[1]+","+particle.color[2]+","+(1.- particle.y/(ctx.canvas.clientHeight-particle_height))+")";
+                
+                ctx.beginPath();
+                ctx.moveTo(particle.x + particle_width * Math.sin(particle.t)/2, particle.y);
+                ctx.lineTo(particle.x + particle_width + particle_width * Math.sin(particle.t)/2, particle.y);
+                ctx.lineTo(particle.x + particle_width + particle_width * Math.cos(particle.t)/2, particle.y + particle_height);
+                ctx.lineTo(particle.x + particle_width * Math.cos(particle.t)/2, particle.y + particle_height);
+                ctx.lineTo(particle.x + particle_width * Math.sin(particle.t)/2, particle.y);
+                ctx.fill();
+            }
+
+            function nextTickParticle(particle, dt){
+                particle.t += dt/100;
+                particle.x = (particle.x + dt * particle.speedx);
+                particle.y = (particle.y + dt * particle.speedy);
+
+                if (particle.x > ctx.canvas.clientWidth){
+                    particle.x = 0;
+                } else if (particle.x < 0){
+                    particle.x = ctx.canvas.clientWidth;
+                }
+
+                if (particle.y > ctx.canvas.clientHeight){
+                    particle.speedy = -2*max_speedy;
+                    particle.x = ctx.canvas.clientWidth/2
+                } else if (particle.y < 0){
+                    particle.x = Math.random() * ctx.canvas.clientWidth;
+                    particle.y = 0;
+                    particle.speedx = (2 * Math.random() - 1) * max_speedx;
+                    particle.speedy = max_speedy/2 + Math.random() * max_speedy/2;
+                }
+            }
+
+            function nextFrame(){
+                const dt = Date.now() - time;
+                time += dt;
+
+                ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
+                for (let k=0; k<nb_particles; k++){
+                    drawParticle(particles[k]);
+                    nextTickParticle(particles[k], dt);
+                }
+                requestAnimationFrame(nextFrame);
+
+            }
+
+            requestAnimationFrame(nextFrame);
+        }
+
+        const canvas = document.getElementById("canvas");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const ctx = canvas.getContext("2d");
+
+        const nb_particles = 100
+        const max_speedy_percentage = 0.001; // height%/ms
+        const max_speedx_percentage = 0.0001;
+        const particle_width_percentage = 0.01;
+        const particle_height_percentage = 0.02;
+        const colors = [[150,0,0],[0,150,0],[0,0,150], [150,0,150], [150,150,0]];
+        animeParticles(ctx, nb_particles, colors, max_speedy_percentage, max_speedx_percentage, particle_width_percentage, particle_height_percentage);
+
+    </script>
+
+</html>
