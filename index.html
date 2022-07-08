@@ -33,11 +33,11 @@
             let time = Date.now();
 
             function drawParticle(particle){
-                const gradient = ctx.createLinearGradient(particle.x, particle.y, particle.x + particle_width, particle.y + particle_height)
-                gradient.addColorStop(0,"rgba("+particle.color[0]*1.5+","+particle.color[1]*1.5+","+particle.color[2]*1.5+","+(1.- particle.y/(ctx.canvas.clientHeight-particle_height))+")");
-                gradient.addColorStop(1,"rgba("+particle.color[0]+","+particle.color[1]+","+particle.color[2]+","+(1.- particle.y/(ctx.canvas.clientHeight-particle_height))+")");
-                ctx.fillStyle = gradient;
-                //ctx.fillStyle = "rgba("+particle.color[0]+","+particle.color[1]+","+particle.color[2]+","+(1.- particle.y/(ctx.canvas.clientHeight-particle_height))+")";
+                //const gradient = ctx.createLinearGradient(particle.x, particle.y, particle.x + particle_width, particle.y + particle_height)
+                //gradient.addColorStop(0,"rgba("+particle.color[0]*1.5+","+particle.color[1]*1.5+","+particle.color[2]*1.5+","+(1.- particle.y/(ctx.canvas.clientHeight-particle_height))+")");
+                //gradient.addColorStop(1,"rgba("+particle.color[0]+","+particle.color[1]+","+particle.color[2]+","+(1.- particle.y/(ctx.canvas.clientHeight-particle_height))+")");
+                //ctx.fillStyle = gradient;
+                ctx.fillStyle = "rgba("+particle.color[0]+","+particle.color[1]+","+particle.color[2]+","+(1.- particle.y/(ctx.canvas.clientHeight-particle_height))+")";
                 
                 ctx.beginPath();
                 ctx.moveTo(particle.x + particle_width * Math.sin(particle.t)/2, particle.y);
